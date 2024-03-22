@@ -1,54 +1,38 @@
-#include <stdio.h>
-#include <string.h>
+def find_root(parent, i):
+    if parent[i] == -1:
+        return i
+    parent[i] = find_root(parent, parent[i])
+    return parent[i]
 
-int main() {
-    int n, m, p;
-    int parent[100001];
-    int size[100001];
-    memset(parent, -1, sizeof(parent));
-    memset(size, 0, sizeof(size));
+def union(parent, size, a, b):
+    root_a = find_root(parent, a)
+    root_b = find_root(parent, b)
 
-    while (scanf("%d %d", &n, &m) != EOF) {
-        for (int i = 1; i <= n; i++) {
-            parent[i] = -1;
-            size[i] = 1;
-        }
+    if root_a == root_b:
+        return
 
-        for (int i = 0; i < m; i++) {
-            scanf("%d", &p);
-            int root = p;
-            while (parent[root] != -1) {
-                root = parent[root];
-            }
+    if size[root_a] < size[root_b]:
+        parent[root_a] = root_b
+        size[root_b] += size[root_a]
+    else:
+        parent[root_b] = root_a
+        size[root_a] += size[root_b]
 
-            for (int j = 0; j < p - 1; j++) {
-                scanf("%d", &p);
-                int p_root = p;
-                while (parent[p_root] != -1) {
-                    p_root = parent[p_root];
-                }
+while True:
+    try:
+        n, m = map(int, input().split())
+    except:
+        break
 
-                if (p_root != root) {
-                    if (size[p_root] > size[root]) {
-                        parent[root] = p_root;
-                        size[p_root] += size[root];
-                    } else {
-                        parent[p_root] = root;
-                        size[root] += size[p_root];
-                    }
-                }
-            }
-        }
+    parent = [-1] * (n + 1)
+    size = [1] * (n + 1)
 
-        int max_size = 0;
-        for (int i = 1; i <= n; i++) {
-            if (parent[i] == -1) {
-                max_size = size[i] > max_size ? size[i] : max_size;
-            }
-        }
+    for _ in range(m):
+        p = int(input())
+        ancestors = list(map(int, input().split()))
 
-        printf("%d\n", max_size);
-    }
+        for bee in ancestors:
+            union(parent, size, p, bee)
 
-    return 0;
-}
+    max_size = max(size)
+    print(max_size)
