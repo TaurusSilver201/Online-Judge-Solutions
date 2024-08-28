@@ -18,6 +18,7 @@ def union(parent, size, a, b):
         parent[root_b] = root_a
         size[root_a] += size[root_b]
 
+
 while True:
     try:
         n, m = map(int, input().split())
